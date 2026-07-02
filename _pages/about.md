@@ -9,7 +9,7 @@ profile:
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>Chenyang Wang<p>
+    <p>Chenyang Wang</p>
     <p>chenyangwang0320@gmail.com</p>
     <p>Shanghai, China</p>
 
