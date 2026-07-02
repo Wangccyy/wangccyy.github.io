@@ -27,6 +27,6 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Hello!I am a cybersecurity enthusiast with a passion for cybersecurity and vulnerability research.Currently, I am studying AI for Security, specializing in Agent Security.
+Hello! I am a cybersecurity enthusiast with a passion for cybersecurity and vulnerability research.Currently, I am studying AI for Security, specializing in Agent Security.
 
 I enjoy thinking about security issues, participating in CTF competitions, and exploring open-source projects.In my spare time, I contribute to open-source software and experiment with new technologies.
