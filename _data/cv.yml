@@ -30,7 +30,7 @@ cv:
         score: "87/100"
         courses: "C programming language"
         highlights:
-          - Academic Transcript
+          - 'Academic Transcript: <a href="/assets/pdf/transcript.pdf" target="_blank">PDF</a>'
         
 
     Experience:
