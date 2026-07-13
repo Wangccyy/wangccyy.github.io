@@ -27,11 +27,11 @@ cv:
         studyType: bachelor's degree
         start_date: 2019
         end_date: 2023
-        score: ""
-        courses: "Theory of Relativity"
+        score: "87/100"
+        courses: "C programming language"
         highlights:
-          - Description 1.
-          - Description 2.
+          - Academic Transcript: "[PDF](/assets/pdf/transcript.pdf)"
+        
 
     Experience:
       - company: Institute for Advanced Study, Princeton University
@@ -53,24 +53,7 @@ cv:
           - Description 1.
           - Description 2.
 
-      - company: Kaiser Wilhelm Institute for Physics
-        position: Director
-        location: Berlin, Germany
-        start_date: 1917
-        end_date: 1933
-
-      - company: Karl-Ferdinand University
-        position: Professor of Theoretical Physics
-        location: Prague, Czechoslovakia
-        start_date: 1911
-        end_date: 1917
-
-      - company: University of Zurich
-        position: Associate Professor of Theoretical Physics
-        location: Zurich, Switzerland
-        start_date: 1909
-        end_date: 1911
-
+      
     Volunteer:
       - company: People's Climate March
         position: Lead Organizer
@@ -83,14 +66,13 @@ cv:
           - "Men of the year 2014 by Time magazine"
 
     Awards:
-      - title: Nobel Prize in Physics
+      - title: National Encouragement Scholarship
         authors:
-          - "Royal Swedish Academy of Sciences"
-        date: 1921-11-01
-        awarder: Royal Swedish Academy of Sciences
-        url: https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/
-        summary: The Nobel Prizes are five separate prizes that, according to Alfred Nobel's will of 1895, are awarded to 'those who, during the preceding year, have conferred the greatest benefit to humankind.'
-
+          - ""
+        date: 2020-9-1
+        awarder: Chenyang Wang
+        url: 
+        summary: 
       - title: Max Planck Medal
         authors:
           - "German Physical Society"
