@@ -12,7 +12,7 @@ cv:
 
 
   address:
-    street: 2712 Broadway St
+    # street: 2712 Broadway St
     city: Shanghai
     region: Shanghai
     # postalCode: CA 94115
@@ -34,24 +34,24 @@ cv:
         
 
     Experience:
-      - company: Institute for Advanced Study, Princeton University
-        position: Professor of Theoretical Physics
-        location: Princeton University, NJ
-        start_date: 1933
-        end_date: 1955
-        summary: Teaching at Palmer Physical Laboratory (now 302 Frist Campus Center). While not a professor at Princeton, I associated with the physics professors and continued to give lectures on campus.
+      - company: Huabao Securities Co., Ltd.
+        position: Quantitative Operations Engineer
+        location: Shanghai, CN
+        start_date: 2025
+        end_date: now
+        summary: Maintained quantitative trading test environments
         highlights:
           - Relativity
-          - Description 2.
+          
 
-      - company: California Institute of Technology
-        position: Visiting Professor
-        location: Pasadena, California, US
-        start_date: 1933
-        end_date: 1933
+      - company: Shanghai Chuangqi Tianxia Co., Ltd.
+        position: Penetration Testing Engineer
+        location: Shanghai, CN
+        start_date: 2024
+        end_date: 2025
         highlights:
-          - Description 1.
-          - Description 2.
+          - Penetration testing / Code analysis.
+          
 
       
     Volunteer:
