@@ -1,3 +1,9 @@
+---
+layout: page
+title: "SQL Injection"
+permalink: /research/CTF/
+---
+
 ### sql注入的基本原理
 SQL 注入（SQL Injection）是指攻击者通过向 Web 应用程序的输入字段注入恶意 SQL 语句，从而操控后台数据库，达到非法获取数据、绕过登录验证、甚至执行数据库操作的目的。
 
