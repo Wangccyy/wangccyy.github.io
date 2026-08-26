@@ -175,9 +175,6 @@ docker ps
 #访问部署sqlilabs的机器ip
 ```
 
-<img src="https://cdn.nlark.com/yuque/0/2025/png/35187477/1744629549058-8f93d850-03a7-4766-9e42-a6cc622bd0fa.png" width="794.6666666666666" title="" crop="0,0,1,1" id="u9382e4db" class="ne-image">
-
-
 
 #### Less-1
 判断是否存在sql注入
